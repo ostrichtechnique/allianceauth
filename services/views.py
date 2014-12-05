@@ -22,6 +22,10 @@ from forms import JabberBroadcastForm
 from forms import FleetFormatterForm
 from util import check_if_user_has_permission
 
+from eveonline.models import EveCorporationInfo
+from eveonline.models import EveCharacter
+from authentication.models import AuthServicesInfo
+
 
 @login_required
 def fleet_formatter_view(request):
@@ -56,7 +60,12 @@ def jabber_broadcast_view(request):
     if request.method == 'POST':
         form = JabberBroadcastForm(request.POST)
         if form.is_valid():
-            OpenfireManager.send_broadcast_message(form.cleaned_data['group'], form.cleaned_data['message'])
+            user_info = AuthServicesInfo.objects.get(user=request.user)
+            main_char = EveCharacter.objects.get(character_id=user_info.main_char_id)
+            if auth_infoTEST.main_char_id != "":
+                OpenfireManager.send_broadcast_message(form.cleaned_data['group'], form.cleaned_data['message'] + "\n ##### SENT BY: " + main_char.character_name + " TO: " + form.cleaned_data['group'] + " #####\n")
+            else:
+                OpenfireManager.send_broadcast_message(form.cleaned_data['group'], form.cleaned_data['message'] + "\n ##### SENT BY: " + "No character but can send pings?" + " TO: " + form.cleaned_data['group'] + " #####\n")
             success = True
     else:
         form = JabberBroadcastForm()
