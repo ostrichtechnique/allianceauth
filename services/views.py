@@ -62,7 +62,7 @@ def jabber_broadcast_view(request):
         if form.is_valid():
             user_info = AuthServicesInfo.objects.get(user=request.user)
             main_char = EveCharacter.objects.get(character_id=user_info.main_char_id)
-            if auth_infoTEST.main_char_id != "":
+            if user_info.main_char_id != "":
                 OpenfireManager.send_broadcast_message(form.cleaned_data['group'], form.cleaned_data['message'] + "\n ##### SENT BY: " + main_char.character_name + " TO: " + form.cleaned_data['group'] + " #####\n")
             else:
                 OpenfireManager.send_broadcast_message(form.cleaned_data['group'], form.cleaned_data['message'] + "\n ##### SENT BY: " + "No character but can send pings?" + " TO: " + form.cleaned_data['group'] + " #####\n")
